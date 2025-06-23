@@ -6,12 +6,13 @@ import { FaHistory } from "react-icons/fa";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+
 import Divider from '@mui/material/Divider';
 import Edit from './Edit';
 import {jsPDF} from 'jspdf'
 import html2canvas from 'html2canvas'
 import { AddResumeHistoryAPI } from '../services/allAPIs';
+import { Link } from 'react-router-dom';
 
 function Preview({formData,setFormData}) {
 
@@ -68,7 +69,7 @@ function Preview({formData,setFormData}) {
                                <Button onClick={downloadPDF}><GrDocumentDownload className='fs-3' /></Button>
 
              <Edit resumeId={resumeId} onUpdate={handleUpdateData} />
-        <Link to={'/history'}>
+        <Link to={'/history'} >
         <Button><FaHistory className='fs-3' /></Button>
         </Link>
           </Stack>
