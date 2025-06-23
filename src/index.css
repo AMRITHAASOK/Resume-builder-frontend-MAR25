@@ -1,0 +1,8 @@
+*{
+   font-family: "Noto Sans", sans-serif;
+   scroll-behavior: smooth;
+}
+
+.bg{
+  background-color: rgb(53, 4, 99);
+}

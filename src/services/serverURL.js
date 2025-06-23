@@ -1,0 +1,1 @@
+export const serverURL = 'https://resumebuilder-up-backend-mar25.onrender.com'
