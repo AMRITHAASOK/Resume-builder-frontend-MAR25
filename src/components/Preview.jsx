@@ -49,7 +49,7 @@ function Preview({formData,setFormData}) {
             console.log(err); 
           }}
       console.log(resumeId); 
-      
+
       //to hold child data , (child : edit)
       const handleUpdateData=(data)=>{
         //assign child data to parent state
@@ -68,7 +68,7 @@ function Preview({formData,setFormData}) {
                                <Button onClick={downloadPDF}><GrDocumentDownload className='fs-3' /></Button>
 
              <Edit resumeId={resumeId} onUpdate={handleUpdateData} />
-        <Link href={'/history'}>
+        <Link to={'/history'}>
         <Button><FaHistory className='fs-3' /></Button>
         </Link>
           </Stack>
