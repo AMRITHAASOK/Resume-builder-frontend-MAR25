@@ -76,7 +76,7 @@ function Steps({ formData, setFormData,setIsFinished }) {
                 <div>
                     <h3>Personal Details</h3>
                     <div className='d-flex row p-3'>
-                        <TextField onChange={e => setFormData({ ...formData, personalData: { ...formData.personalData, name: e.target.value } })} value={formData.personalData.name} id="standard-basic" label="Full Name" variant="standard" />
+                         <TextField onChange={e => setFormData({ ...formData, personalData: { ...formData.personalData, name: e.target.value } })} value={formData.personalData.name} id="standard-basic" label="Full Name" variant="standard" />
                         <TextField onChange={e => setFormData({ ...formData, personalData: { ...formData.personalData, jobTitle: e.target.value } })} value={formData.personalData.jobTitle} id="standard-basic" label="Job Title" variant="standard" />
                         <TextField onChange={e => setFormData({ ...formData, personalData: { ...formData.personalData, location: e.target.value } })} value={formData.personalData.location} id="standard-basic" label="Location" variant="standard" />
                     </div>

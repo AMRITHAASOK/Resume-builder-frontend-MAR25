@@ -1,66 +1,112 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { deleteResumeHistoryAPI, getResumeHistoryAPI } from '../services/allAPIs';
 import { MdDelete } from "react-icons/md";
+
 function History() {
+  const [history, setHistory] = useState([]);
 
-  const [history,setHistory]=useState([])
-
-  const getHistory=async()=>{
-    const result = await getResumeHistoryAPI()
-    console.log(result);
-    setHistory(result.data)
-  }
-  console.log(history);
-
-  const deleteHistory=async(id)=>{
-      try{
-        const result = await deleteResumeHistoryAPI(id)
+  const getHistory = async () => {
+    try {
+      const result = await getResumeHistoryAPI();
       console.log(result);
-      getHistory()
-      }
-      catch(err){
-        console.log(err);
-        
-      }
-      
-  }
-  
+      setHistory(result.data);
+    } catch (err) {
+      console.error('Error fetching history:', err);
+    }
+  };
 
-  useEffect(()=>{
-    getHistory()
-  },[])
+  const deleteHistory = async (id) => {
+    try {
+      await deleteResumeHistoryAPI(id);
+      getHistory(); // Refresh list after deletion
+    } catch (err) {
+      console.error('Error deleting history:', err);
+    }
+  };
+
+  useEffect(() => {
+    getHistory();
+  }, []);
 
   return (
     <div>
+      <Typography variant="h4" align="center" my={4}>
+        Resume Downloaded History
+      </Typography>
 
-      <Typography variant='h4' align='center' my={3}>Resume Downloaded History</Typography>
-     <Stack direction={'row'} >
-      {
-        history.length>0? 
-        history.map((item,index)=>(
-           <Paper key={index} elevation={7} sx={{width:400,p:5,m:3}}>
-        <Button sx={{float:'right'}}><MdDelete onClick={()=>deleteHistory(item.id)} className='text-danger fs-2' /></Button>
-          <Typography variant='h6' align='center'>{item.personalData.name}</Typography>
-           <Typography variant="subtitle1" align='center'color='#00b0ff' >
-           {item.experience.jobRole}
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="center"
+        gap={4}
+        px={2}
+      >
+        {history.length > 0 ? (
+          history.map((item, index) => (
+            <Paper
+              key={index}
+              elevation={6}
+              sx={{
+                width: 320,
+                p: 2,
+                position: "relative",
+                borderRadius: 3,
+              }}
+            >
+              <Button
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  minWidth: "auto",
+                  padding: 0,
+                }}
+                onClick={() => deleteHistory(item.id)}
+              >
+                <MdDelete className="text-danger fs-4" />
+              </Button>
+
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                textAlign="center"
+                mb={1}
+                fontWeight="bold"
+              >
+                Review At:
+                <br />
+                {item.downloadedAt}
+              </Typography>
+
+              <Box
+                sx={{
+                  width: "100%",
+                  height: 400,
+                  overflow: "hidden",
+                  borderRadius: 2,
+                  boxShadow: 2,
+                }}
+              >
+                <img
+                  src={item.image}
+                  alt="Resume preview"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </Box>
+            </Paper>
+          ))
+        ) : (
+          <Typography variant="body1" mt={5}>
+            No history available
           </Typography>
-           <Divider></Divider>
-          <Typography variant='h6' align='center'>{item.education.course}</Typography>
-            <Typography variant='body2' align='center' mb={4}>
-          {item.education.college} | {item.education.university} | {item.education.year}
-          </Typography> 
-      </Paper>
-        ))
-        :"No history"
-      }
-     </Stack>
+        )}
+      </Box>
     </div>
-  )
+  );
 }
 
-export default History
+export default History;

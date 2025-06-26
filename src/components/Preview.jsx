@@ -25,30 +25,49 @@ function Preview({formData,setFormData}) {
   console.log(formData);
       const { personalData, education, experience, skills, summary } = formData
 
-      const downloadPDF=async()=>{
+      const downloadPDF = async () => {
+  console.log('inside download button');
 
-          const input = document.getElementById("result")//to get id
+  const input = document.getElementById("result");
 
-          const canvas = await html2canvas(input,{scale:2})//convert selected html to canvas (screenshot)
-          const imgData = canvas.toDataURL('image/png')//convert canvas into image URL
-          //create pdf
-          const pdf = new jsPDF('p','mm','a4')
-          const pdfWidth = pdf.internal.pageSize.getWidth()
-          const pdfHeight = (canvas.height*pdfWidth)/canvas.width
+  const canvas = await html2canvas(input, { scale: 2 });
+  const imgData = canvas.toDataURL('image/png');
 
-          pdf.addImage(imgData,'PNG',0,0,pdfWidth,pdfHeight)
-          pdf.save('resume.pdf')
+  // ✅ Get current date and time
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString();     // e.g., "6/24/2025"
+  const formattedTime = now.toLocaleTimeString();     // e.g., "2:45:00 PM"
+  const formattedDateTime = `${formattedDate}, ${formattedTime}`;
+  console.log('Downloaded At:', formattedDateTime);
 
-          try{
-            const result = await AddResumeHistoryAPI(formData)
-              console.log(result);
-              setResumeId(result.data.id)
-              setDownloadStatus(true)
-  
-          }
-          catch(err){
-            console.log(err); 
-          }}
+  // Create PDF
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  pdf.save('resume.pdf');
+
+  try {
+    const result = await AddResumeHistoryAPI({
+      personalData,
+      education,
+      experience,
+      skills,
+      summary,
+      image: imgData,
+      downloadedAt: formattedDateTime  // 👈 Send proper datetime
+    });
+
+    console.log(result);
+    setResumeId(result.data.id);
+    setDownloadStatus(true);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
       console.log(resumeId); 
 
       //to hold child data , (child : edit)
@@ -66,9 +85,8 @@ function Preview({formData,setFormData}) {
         {
           downloadStatus ? 
           <Stack direction={'row'}>
-                               <Button onClick={downloadPDF}><GrDocumentDownload className='fs-3' /></Button>
-
-             <Edit resumeId={resumeId} onUpdate={handleUpdateData} />
+        <Button onClick={downloadPDF}><GrDocumentDownload className='fs-3' /></Button>
+        <Edit resumeId={resumeId} onUpdate={handleUpdateData} />
         <Link to={'/history'} >
         <Button><FaHistory className='fs-3' /></Button>
         </Link>
