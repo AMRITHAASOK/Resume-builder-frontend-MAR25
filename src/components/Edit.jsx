@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -7,7 +7,8 @@ import { RiFileEditLine } from "react-icons/ri";
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import { getAResumeHistoryAPI, updateResumeHistoryAPI } from '../services/allAPIs';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -21,85 +22,92 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-function Edit({resumeId,onUpdate}) {
-  console.log(resumeId);
 
-  const [resumeDetails,setResumeDetails]=useState({
-    id:'', 
-    personalData:{
-      name:'',
-      jobTitle:'',
-      location:'',
-      email:'',
-      phoneNumber:'',
-      github:'',
-      linkedIn:'',
-      portfolio:''
+function Edit({ resumeId, onUpdate }) {
+  const [resumeDetails, setResumeDetails] = useState({
+    id: '',
+    personalData: {
+      name: '',
+      jobTitle: '',
+      location: '',
+      email: '',
+      phoneNumber: '',
+      github: '',
+      linkedIn: '',
+      portfolio: ''
     },
-    education:{
-      course:'',
-      college:'',
-      university:'',
-      year:''
+    education: {
+      course: '',
+      college: '',
+      university: '',
+      year: ''
     },
-    experience:{
-      jobRole:'',
-      company:'',
-      location:'',
-      duration:''
+    experience: {
+      jobRole: '',
+      company: '',
+      location: '',
+      duration: ''
     },
-    skills:[],
-    summary:''
-  })
-  
-  const getAResume=async()=>{
-    const result = await getAResumeHistoryAPI(resumeId)
-    console.log(result);
-    setResumeDetails(result.data)
-  
-  }
-  console.log(resumeDetails);
+    skills: [],
+    summary: ''
+  });
 
-  const updateResume=async()=>{
-   try{
-     const result = await updateResumeHistoryAPI(resumeId,resumeDetails)
-    console.log(result);
-    if(result.status==200){
+  const [newSkill, setNewSkill] = useState('');
+
+  const getAResume = async () => {
+    const result = await getAResumeHistoryAPI(resumeId);
+    setResumeDetails(result.data);
+  };
+
+  const updateResume = async () => {
+    try {
+      const result = await updateResumeHistoryAPI(resumeId, resumeDetails);
+      if (result.status === 200) {
         Swal.fire({
-                      title: 'Success!',
-                      text: 'Resume Updated successfull',
-                      icon: 'success',
-                      confirmButtonText: 'Back'
-                  })
-                  handleClose()
-                  // assigned updated data,send to parent as props
-                    onUpdate(result.data)
-    }
-    
-    else{
+          title: 'Success!',
+          text: 'Resume Updated successfully',
+          icon: 'success',
+          confirmButtonText: 'Back'
+        });
+        onUpdate(result.data);
+        handleClose();
+      } else {
         Swal.fire({
-                      title: 'Error!',
-                      text: 'Error',
-                      icon: 'error',
-                      confirmButtonText: 'Back'
-                  })
+          title: 'Error!',
+          text: 'Error updating resume',
+          icon: 'error',
+          confirmButtonText: 'Back'
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        title: 'Error!',
+        text: 'An error occurred while updating the resume',
+        icon: 'error',
+        confirmButtonText: 'Back'
+      });
     }
-   }
-   catch(err){
-      console.log(err);
-      
-   }
-    
-  }
-  
-  useEffect(()=>{
-    getAResume()
-  },[resumeId])
+  };
 
+  useEffect(() => {
+    getAResume();
+  }, [resumeId]);
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleAddSkill = () => {
+    if (newSkill) {
+      setResumeDetails(prevDetails => ({
+        ...prevDetails,
+        skills: [...prevDetails.skills, newSkill]
+      }));
+      setNewSkill('');
+    }
+  };
+
   return (
     <div>
       <Button onClick={handleOpen}><RiFileEditLine className='fs-3' /></Button>
@@ -114,86 +122,163 @@ function Edit({resumeId,onUpdate}) {
             Edit Details
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <div>
-              <h3>Personal Details</h3>
-              <div className='d-flex row p-3'>
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, name: e.target.value } })}  value={resumeDetails?.personalData?.name} label="Full Name"  variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, jobTitle: e.target.value } })} value={resumeDetails?.personalData?.jobTitle} label="Job Title" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, location: e.target.value } })} value={resumeDetails?.personalData?.location} label="Location" variant="standard" />
-              </div>
+            {/* Personal Details */}
+            <h3>Personal Details</h3>
+            <div className='d-flex row p-3'>
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, name: e.target.value } })}
+                value={resumeDetails?.personalData?.name}
+                label="Full Name"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, jobTitle: e.target.value } })}
+                value={resumeDetails?.personalData?.jobTitle}
+                label="Job Title"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, location: e.target.value } })}
+                value={resumeDetails?.personalData?.location}
+                label="Location"
+                variant="standard"
+              />
             </div>
-            <div>
-              <h3>Contact Details</h3>
-              <div className='d-flex row p-3'>
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, email: e.target.value } })} value={resumeDetails?.personalData?.email} label="Email" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, phoneNumber: e.target.value } })} value={resumeDetails?.personalData?.phoneNumber} label="Phone Number" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, github: e.target.value } })} value={resumeDetails?.personalData?.github} label="Github Profile Link" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, linkedIn: e.target.value } })} value={resumeDetails?.personalData?.linkedIn} label="LinkedIn Profile Link" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, portfolio: e.target.value } })} value={resumeDetails?.personalData?.portfolio} label="Portfolio Link" variant="standard" />
-              </div>
-            </div>
-            <div>
-              <h3>Education Details</h3>
-              <div className='d-flex row p-3'>
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, course: e.target.value } })} value={resumeDetails?.education?.course} label="Course Name" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, college: e.target.value } })} value={resumeDetails?.education?.college} label="College Name" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, university: e.target.value } })} value={resumeDetails?.education?.university} label="University" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, year: e.target.value } })} value={resumeDetails?.education?.year} label="Year of Passout" variant="standard" />
-              </div>
-            </div>
-            <div>
-              <h3>Professional Details</h3>
-              <div className='d-flex row p-3'>
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, jobRole: e.target.value } })} value={resumeDetails?.experience?.jobRole} label="Job or Internship" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, company: e.target.value } })} value={resumeDetails?.experience?.company} label="Company Name" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, location: e.target.value } })} value={resumeDetails?.experience?.location} label="Location" variant="standard" />
-                <TextField id="standard-basic" onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, duration: e.target.value } })} value={resumeDetails?.experience?.duration} label="Duration" variant="standard" />
-              </div>
-            </div>
-            <div>
-              <h3>Skills</h3>
-              <Box sx={{ width: '100%' }}>
-                <Stack spacing={2} >
-                  <TextField id="standard-basic" label="Add Skill" variant="standard" />
 
-                  <Button variant="text" sx={{ maxWidth: '40px' }}>Add</Button>
-
-                </Stack>
-                <div>
-                  <h5>Selected : </h5>
-                  {
-                    resumeDetails?.skills?.length>0 ? resumeDetails?.skills?.map((item,index)=>(
-                                        <Button key={index} variant="outlined" size='small'>{item}</Button>
-
-                    )):""
-                  }
-                </div>
-              </Box>
+            {/* Contact Details */}
+            <h3>Contact Details</h3>
+            <div className='d-flex row p-3'>
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, email: e.target.value } })}
+                value={resumeDetails?.personalData?.email}
+                label="Email"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, phoneNumber: e.target.value } })}
+                value={resumeDetails?.personalData?.phoneNumber}
+                label="Phone Number"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, github: e.target.value } })}
+                value={resumeDetails?.personalData?.github}
+                label="Github Profile Link"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, linkedIn: e.target.value } })}
+                value={resumeDetails?.personalData?.linkedIn}
+                label="LinkedIn Profile Link"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, personalData: { ...resumeDetails.personalData, portfolio: e.target.value } })}
+                value={resumeDetails?.personalData?.portfolio}
+                label="Portfolio Link"
+                variant="standard"
+              />
             </div>
-            <div>
 
-              <h3 className='mt-3'>Professional Summary</h3>
-              <div className='d-flex row p-3'>
+            {/* Education Details */}
+            <h3>Education Details</h3>
+            <div className='d-flex row p-3'>
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, course: e.target.value } })}
+                value={resumeDetails?.education?.course}
+                label="Course Name"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, college: e.target.value } })}
+                value={resumeDetails?.education?.college}
+                label="College Name"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, university: e.target.value } })}
+                value={resumeDetails?.education?.university}
+                label="University"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, education: { ...resumeDetails.education, year: e.target.value } })}
+                value={resumeDetails?.education?.year}
+                label="Year of Passout"
+                variant="standard"
+              />
+            </div>
+
+            {/* Professional Details */}
+            <h3>Professional Details</h3>
+            <div className='d-flex row p-3'>
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, jobRole: e.target.value } })}
+                value={resumeDetails?.experience?.jobRole}
+                label="Job or Internship"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, company: e.target.value } })}
+                value={resumeDetails?.experience?.company}
+                label="Company Name"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, location: e.target.value } })}
+                value={resumeDetails?.experience?.location}
+                label="Location"
+                variant="standard"
+              />
+              <TextField
+                onChange={e => setResumeDetails({ ...resumeDetails, experience: { ...resumeDetails.experience, duration: e.target.value } })}
+                value={resumeDetails?.experience?.duration}
+                label="Duration"
+                variant="standard"
+              />
+            </div>
+
+            {/* Skills */}
+            <h3>Skills</h3>
+            <Box sx={{ width: '100%' }}>
+              <Stack spacing={2}>
                 <TextField
-                  id="standard-multiline-static"
-                  label="Write a short summary of yourself"
-                  multiline
-                  rows={4}
-                  onChange={e => setResumeDetails({ ...resumeDetails, summary: e.target.value })}
-
-                  value={resumeDetails.summary}
-                  defaultValue="Eg : I'm a passionate full-stack developer with hands-on experience in React,Node ..."
+                  id="add-skill"
+                  label="Add Skill"
                   variant="standard"
+                  value={newSkill}
+                  onChange={e => setNewSkill(e.target.value)}
                 />
+                <Button variant="text" onClick={handleAddSkill}>Add</Button>
+              </Stack>
+              <div>
+                <h5>Selected Skills:</h5>
+                {resumeDetails?.skills?.length > 0 ? resumeDetails.skills.map((item, index) => (
+                  <Button key={index} variant="outlined" size='small'>{item}</Button>
+                )) : ""}
               </div>
+            </Box>
+
+            {/* Professional Summary */}
+            <h3 className='mt-3'>Professional Summary</h3>
+            <div className='d-flex row p-3'>
+              <TextField
+                id="standard-multiline-static"
+                label="Write a short summary of yourself"
+                multiline
+                rows={4}
+                onChange={e => setResumeDetails({ ...resumeDetails, summary: e.target.value })}
+                value={resumeDetails.summary}
+                variant="standard"
+              />
             </div>
           </Typography>
-          
+
           <Button onClick={updateResume}>Update</Button>
         </Box>
       </Modal>
     </div>
-  )
+  );
 }
 
-export default Edit
+export default Edit;
