@@ -34,7 +34,7 @@ function LandingPage() {
                         <p>Effortlessly manage and track your job applications in an organized manner.</p>
                     </div>
                     <div className="col-12 col-md-6">
-                        <img src="https://cdn-images.zety.com/images/zety/landings/builder/resume-builder-jumbotron-image@3x.png" alt="" />
+                        <img src="https://cdn-images.zety.com/images/zety/landings/builder/resume-builder-jumbotron-image@3x.png" width={'70%'} alt="" />
                     </div>
                 </div>
             </section>
