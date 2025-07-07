@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { deleteResumeHistoryAPI, getResumeHistoryAPI } from '../services/allAPIs';
 import { MdDelete } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 function History() {
   const [history, setHistory] = useState([]);
@@ -37,7 +38,9 @@ function History() {
       <Typography variant="h4" align="center" my={4}>
         Resume Downloaded History
       </Typography>
-
+<Link to={'/'} style={{float:'right',marginLeft:'20px'}}>
+              <Button>Back</Button>
+            </Link>
       <Box
         display="flex"
         flexWrap="wrap"
